@@ -76,7 +76,38 @@ class MenuController
         puts "New entry created"
     end
 
-    def search_entries
+    def search_entries(error=nil)
+        system "clear"
+
+        if address_book.entries.length > 0
+            puts "Get Entry"
+
+            puts error
+            puts "Which of the #{address_book.entries.length}  entries would you like to view? "
+            selection = gets.to_i
+            if selection > 0 && selection <= address_book.entries.length
+                system "clear"
+                puts address_book.entries[selection - 1]
+
+            elsif selection > address_book.entries.length && address_book.entries.length > 0
+                system "clear"
+
+                search_entries("There are only #{address_book.entries.length} entries, please select a number equal to or less than #{address_book.entries.length}")
+            elsif selection < 0
+                system "clear"
+
+                search_entries("You must enter a positive number")
+            else
+                system "clear"
+
+                search_entries("You must enter a number less between 1 and #{address_book.entries.length}")
+            end
+        else
+            system "clear"
+            puts "The address book is empty"
+            main_menu
+        end
+
     end
 
     def read_csv
