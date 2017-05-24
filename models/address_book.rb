@@ -61,6 +61,18 @@ class AddressBook
         # if we go through everything without a match, it returns nil
         return nil
     end
+
+    def iterative_search(name)
+        i = 0
+        while i < (entries.length)
+            item = entries[i].name
+            if name == item
+                return entries[i]
+            else
+                i += 1
+            end
+        end
+    end
 end
 
 a = AddressBook.new
