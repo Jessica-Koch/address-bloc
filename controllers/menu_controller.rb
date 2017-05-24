@@ -76,42 +76,65 @@ class MenuController
         puts "New entry created"
     end
 
-    def search_entries(error=nil)
-        system "clear"
+    def search_submenu(entry)
+        puts "\nd - delete entry"
+        puts "e - edit this entry"
+        puts "m - return to main menu"
 
-        if address_book.entries.length > 0
-            puts "Get Entry"
+        selection = gets.chomp
 
-            puts error
-            puts "Which of the #{address_book.entries.length}  entries would you like to view? "
-            selection = gets.to_i
-            if selection > 0 && selection <= address_book.entries.length
-                system "clear"
-                puts address_book.entries[selection - 1]
-
-            elsif selection > address_book.entries.length && address_book.entries.length > 0
-                system "clear"
-
-                search_entries("There are only #{address_book.entries.length} entries, please select a number equal to or less than #{address_book.entries.length}")
-            elsif selection < 0
-                system "clear"
-
-                search_entries("You must enter a positive number")
-            else
-                system "clear"
-
-                search_entries("You must enter a number less between 1 and #{address_book.entries.length}")
-            end
+        case selection
+        when "d"
+            system "clear"
+            delete_entry(entry)
+            main_menu
+        when "e"
+            edit_entry(entry)
+            system "clear"
+            main_menu
+        when "m"
+            system "clear"
+            main_menu
         else
             system "clear"
-            puts "The address book is empty"
-            main_menu
+            puts "#{selection} is not a valid input"
+            puts entry.to_s
+            search_submenu(entry)
         end
+    end
 
+    def search_entries(error=nil)
+        print "Search by name: "
+        name = gets.chomp
+
+        match = address_book.binary_search(name)
+        system "clear"
+        if match
+            puts match.to_s
+            search_submenu(match)
+        else
+            puts "No match found for #{name}"
+        end
     end
 
     def read_csv
-        
+        print "Enter CSV file to format: "
+        file_name = gets.chomp
+
+        if file_name.empty?
+            system "clear"
+            puts "No CSV file read"
+            main_menu
+        end
+
+        begin
+            entry_count = address_book.import_from_csv(file_name).count
+            system "clear"
+            puts "#{entry_count} new entries added from #{file_name}"
+        rescue
+            puts "#{file_name} is not a valid CSV file, please enter the name of a valid CSV file"
+            read_csv
+        end
     end
 
     def entry_submenu(entry)
@@ -125,7 +148,10 @@ class MenuController
         case selection
         when "n"
         when "d"
+            delete_entry(entry)
         when "e"
+            edit_entry(entry)
+            entry_submenu(entry)
         when "m"
             system "clear"
             main_menu
@@ -134,5 +160,28 @@ class MenuController
             puts "#{selection} is not a valid input"
             entry_submenu(entry)
         end
+    end
+
+    def delete_entry(entry)
+        address_book.entries.delete(entry)
+        puts "#{entry.name} has been deleted"
+    end
+
+    def edit_entry(entry)
+        print "Update names: "
+        name = gets.chomp
+        print "Updated phone number: "
+        phone_number = gets.chomp
+        print "Updated email: "
+        email = gets.chomp
+
+        # only set attributes if they aren't empty
+        entry.name = name if !name.empty?
+        entry.phone_number = phone_number if !phone_number.empty?
+        entry.email = email if !email.empty?
+        system "clear"
+
+        puts "Updated entry: "
+        puts entry
     end
 end
