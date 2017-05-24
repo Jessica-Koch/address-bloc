@@ -61,7 +61,8 @@ class AddressBook
         # if we go through everything without a match, it returns nil
         return nil
     end
-end
 
-a = AddressBook.new
-a.import_from_csv('entries.csv')
+    def detonate
+        @entries = []
+    end
+end

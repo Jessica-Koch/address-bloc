@@ -13,7 +13,8 @@ class MenuController
         puts "2 - Create an entry"
         puts "3 - Search for an entry"
         puts "4 - Import entries from a CSV"
-        puts "5 - Exit"
+        puts "5 - Destroy all entries"
+        puts "6 - Exit"
         print "Enter your selection: "
 
         selection = gets.to_i
@@ -36,6 +37,10 @@ class MenuController
             read_csv
             main_menu
         when 5
+            system "clear"
+            detonate
+            main_menu
+        when 6
             puts "Good Bye!"
             exit(0) # exits program where 0 means exit w/o error
         else
